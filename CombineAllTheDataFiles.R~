@@ -88,10 +88,10 @@ vaers_combined <- vaers_data %>%
 # PRIOR_VAX seems to be random information, removing for now.
 # ALLERGIES will be useful, need to clean up the data.
 
-core_cols <- c("VAERS_ID", "RECVDATE", "AGE_YRS", "SEX", "VAX_NAMES", "SYMPTOMS", 
-               "DIED", "HOSPITAL", "L_THREAT", "ER_VISIT", "DISABLE", "RECOVD",
-                "OTHER_MEDS", "CUR_ILL", "HISTORY", "BIRTH_DEFECT", "ALLERGIES")
-
+core_cols <- c("VAERS_ID", "RECVDATE", "AGE_YRS", "SEX", "VAX_NAMES", 
+               "VAX_TYPES", "SYMPTOMS", "DIED", "HOSPITAL", "L_THREAT", 
+               "ER_VISIT", "DISABLE", "RECOVD", "OTHER_MEDS", "CUR_ILL", 
+               "HISTORY", "BIRTH_DEFECT", "ALLERGIES")
 
 # new dataframe with desired columns 
 cleaned_data <- vaers_combined %>% select(all_of(core_cols))

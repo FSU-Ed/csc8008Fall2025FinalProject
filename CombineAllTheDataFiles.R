@@ -11,7 +11,7 @@ setwd("C:/Users/Ed/OneDrive/Documents/FSU/2025Fall/CSC-8008-DataExplorationAnaly
 # importing data files from 2020-2025 willc reate a csv file 273 MB
 # CHANGE 1990:2025 to the range of years you want to use.
 #set firstYear value to be the beginning year of data to pull in
-firstYear <- 1990
+firstYear <- 2010
 
 #set lastYear value to be the last year desired 
 lastYear <- 2025
@@ -20,7 +20,7 @@ lastYear <- 2025
 read_vaers_files <- function(prefix) {
   
   # the file.path should point to where you have uncompressed all the .csv files
-
+  
   #dfs <- lapply(2010:2025, function(year) {
   dfs <- lapply(firstYear:lastYear, function(year) {
     filename <- file.path("AllData/", paste0(year, prefix, ".csv"))
@@ -56,6 +56,7 @@ vax_collapsed <- vaers_vax %>%
   summarise(
     VAX_TYPES = paste(unique(VAX_TYPE), collapse = ", "),
     VAX_NAMES = paste(unique(VAX_NAME), collapse = ", "),
+    VAX_MANU = paste(unique(VAX_MANU), collapse = ", "),
     .groups = "drop"
   )
 
@@ -75,8 +76,6 @@ vaers_combined <- vaers_data %>%
   left_join(vax_collapsed, by = "VAERS_ID") %>%
   left_join(symptoms_collapsed, by = "VAERS_ID")
 
-
-
 #clean up the data 
 
 # Select important columns
@@ -91,7 +90,8 @@ vaers_combined <- vaers_data %>%
 core_cols <- c("VAERS_ID", "RECVDATE", "AGE_YRS", "SEX", "VAX_NAMES", 
                "VAX_TYPES", "SYMPTOMS", "DIED", "HOSPITAL", "L_THREAT", 
                "ER_VISIT", "DISABLE", "RECOVD", "OTHER_MEDS", "CUR_ILL", 
-               "HISTORY", "BIRTH_DEFECT", "ALLERGIES")
+               "HISTORY", "BIRTH_DEFECT", "ALLERGIES", "VAX_MANU")
+
 
 # new dataframe with desired columns 
 cleaned_data <- vaers_combined %>% select(all_of(core_cols))
@@ -99,6 +99,7 @@ cleaned_data <- vaers_combined %>% select(all_of(core_cols))
 #Clean up the new dataframe
 
 # Remove non-valid SEX values
+# "U" Could be considered a value value.
 cleaned_data <- cleaned_data %>% filter(SEX =='F' | SEX == 'M')
 
 # remove non-valid ages, 110 year old should be the max
@@ -109,11 +110,11 @@ cleaned_data <- cleaned_data %>% filter(between(AGE_YRS, 0.00, 110.0))
 bad_codes <- c("0", "-", ".", "?")
 
 cleaned_data <- cleaned_data %>%
-	mutate(
-	       # clear out the bad data in ALLERGIES
-	       ALLERGIES = case_when(
-				     is.na(ALLERGIES) ~ "",
-				     ALLERGIES %in% bad_codes ~ "", 
+  mutate(
+    # clear out the bad data in ALLERGIES
+    ALLERGIES = case_when(
+      is.na(ALLERGIES) ~ "",
+      ALLERGIES %in% bad_codes ~ "", 
       TRUE ~ ALLERGIES
     ),
     # DIED should only be Y or N, anything other than Y = N
@@ -210,3 +211,4 @@ vaers_summary <- list(
 )
 
 print(vaers_summary)
+
