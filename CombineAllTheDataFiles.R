@@ -109,11 +109,11 @@ cleaned_data <- cleaned_data %>% filter(between(AGE_YRS, 0.00, 110.0))
 bad_codes <- c("0", "-", ".", "?")
 
 cleaned_data <- cleaned_data %>%
-  mutate(
-    # clear out the bad data in ALLERGIES
-    ALLERGIES = case_when(
-      is.na(ALLERGIES) ~ "",
-      ALLERGIES %in% bad_codes ~ "", 
+	mutate(
+	       # clear out the bad data in ALLERGIES
+	       ALLERGIES = case_when(
+				     is.na(ALLERGIES) ~ "",
+				     ALLERGIES %in% bad_codes ~ "", 
       TRUE ~ ALLERGIES
     ),
     # DIED should only be Y or N, anything other than Y = N
@@ -150,36 +150,36 @@ cleaned_data <- cleaned_data %>%
   )
 
 #write out the new csv file
-write.csv(vaers_data, paste0(firstYear, "-", lastYear, "_Cleaned_Vaers_data.csv"),  row.names = FALSE)
+write.csv(cleaned_data, paste0(firstYear, "-", lastYear, "_Cleaned_Vaers_data.csv"),  row.names = FALSE)
 
 
 # Inspect the structure
 
 # View the structure of the dataframe (column names, types, and examples)
-str(vaers_combined)
+str(cleaned_data)
 
 
 # Column names only
-colnames(vaers_combined)
+colnames(cleaned_data)
 
 # How many rows and columns
-dim(vaers_combined)
+dim(cleaned_data)
 
 # Show the first few rows
-head(vaers_combined)
+head(cleaned_data)
 
 # Show the last few rows
-tail(vaers_combined)
+tail(cleaned_data)
 
 #Summary:
 
 vaers_summary <- list(
-  total_reports = nrow(vaers_combined),
+  total_reports = nrow(cleaned_data),
   
-  gender_counts = vaers_combined %>%
+  gender_counts = cleaned_data %>%
     count(SEX, sort = TRUE),
   
-  age_stats = vaers_combined %>%
+  age_stats = cleaned_data %>%
     summarise(
       mean_age = mean(AGE_YRS, na.rm = TRUE),
       median_age = median(AGE_YRS, na.rm = TRUE),
@@ -188,17 +188,17 @@ vaers_summary <- list(
       .groups = "drop"
     ),
   
-  top_vax_types = vaers_combined %>%
+  top_vax_types = cleaned_data %>%
     separate_rows(VAX_TYPES, sep = ",\\s*") %>%
     count(VAX_TYPES, sort = TRUE) %>%
     slice_head(n = 10),
   
-  top_symptoms = vaers_combined %>%
+  top_symptoms = cleaned_data %>%
     separate_rows(SYMPTOMS, sep = ",\\s*") %>%
     count(SYMPTOMS, sort = TRUE) %>%
     slice_head(n = 10),
   
-  serious_outcomes = vaers_combined %>%
+  serious_outcomes = cleaned_data %>%
     summarise(
       deaths = sum(DIED == "Y", na.rm = TRUE),
       hospitalized = sum(HOSPITAL == "Y", na.rm = TRUE),

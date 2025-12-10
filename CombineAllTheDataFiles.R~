@@ -45,8 +45,8 @@ vaers_vax <- read_vaers_files("VAERSVAX")
 #Write out as backup
 
 write.csv(vaers_data, paste0(firstYear, "-", lastYear, "_vaers_data.csv"),  row.names = FALSE)
-write.csv(vaers_data, paste0(firstYear, "-", lastYear, "_vaers_symptoms.csv"),  row.names = FALSE)
-write.csv(vaers_data, paste0(firstYear, "-", lastYear, "_vaers_vax.csv"),  row.names = FALSE)
+write.csv(vaers_symptoms, paste0(firstYear, "-", lastYear, "_vaers_symptoms.csv"),  row.names = FALSE)
+write.csv(vaers_vax, paste0(firstYear, "-", lastYear, "_vaers_vax.csv"),  row.names = FALSE)
 # Merge the 3 master dataframes into one
 
 # Collapse vaccines: one row per VAERS_ID with all vaccine types combined
