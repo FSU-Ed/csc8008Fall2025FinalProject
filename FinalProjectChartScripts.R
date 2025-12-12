@@ -955,7 +955,79 @@ ggplot() +
 ############# End Circle Chart
 ###################################################
 
+#####################################################
+############# Bar Chart
+###################################################
 
+#show how many adverse events vs total doses
+
+doses_bar_chart <- calculated_data %>%
+  # Convert YEAR_MONTH_DATE to a Date object
+  mutate(Date = as.Date(YEAR_MONTH_DATE)) %>%
+  
+  # Calculate the Quarter and Year
+  mutate(
+    Year = year(Date),
+    Quarter = quarter(Date),
+    # Create the label for the X-axis (e.g., "2020 Q1")
+    YearQuarter = factor(paste0(Year, " Q", Quarter))
+  ) %>%
+  
+  # Group by the new Quarter/Year field
+  group_by(YearQuarter) %>%
+  summarise(
+    Total_Reports = n(),
+    Total_Adverse = sum(ADVERSE_EVENT, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  # Filter out any dates with zero reports
+  filter(Total_Reports > 0) %>%
+  # Arrange the data chronologically 
+  arrange(YearQuarter)
+
+
+ggplot(doses_bar_chart, aes(x = YearQuarter)) +
+  
+  geom_col(
+    aes(y = Total_Reports, fill = "Total Doses Administered"),
+    width = 0.8, 
+    position = position_identity(),
+    color = "darkgray"
+  ) +
+  
+  geom_col(
+    aes(y = Total_Adverse, fill = "Event Recorded"),
+    width = 0.4, 
+    position = position_identity(),
+    color = "black"
+  ) +
+  
+  scale_fill_manual(
+    name = NULL,
+    values = c("Total Doses Administered" = "#0072B2", "Event Recorded" = "#D55E00")
+  ) +
+  
+  # Customize Axes and Theme
+  scale_y_continuous(
+    name = "Count of Doses Administered (All Vaccine Types)",
+    labels = scales::comma
+  ) +
+  
+  labs(
+    title = "Adverse Events vs. Total Doses by Quarter",
+    x = "Year and Quarter"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "top",
+    plot.title = element_text(face = "bold", hjust = 0.5)
+  )
+
+
+#####################################################
+############# End Bar Chart
+###################################################
 
 ####################################################################
 ### END General Public Charts
