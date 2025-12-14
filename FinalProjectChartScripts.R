@@ -1042,7 +1042,7 @@ ggplot(doses_bar_chart, aes(x = YearQuarter)) +
 
 
 ##########################################
-############# Box plot ###################
+############# Box and whisker plot ###################
 ##########################################
 
 #Age distribution of Adverse Events by Vaccine Type
@@ -1076,7 +1076,7 @@ ggplot(age_dist,
   )
 
 ##############################################
-#####  End Box plot ########################
+#####  End Box and whisker plot ########################
 ###############################################
 
 
@@ -1103,7 +1103,10 @@ ggplot(age_risk_group, aes(x = age_mid, y = adverse_rate)) +
   labs(
     title = "Scatterplot: Age Group (Numeric Midpoint) vs Adverse Event Rate",
     x = "Age (Group Midpoint)",
-    y = "Adverse Event Rate"
+    y = "Adverse Event Rate",   
+    caption = "Adverse-event rate declines with age, which is 
+    counter-intuitive; differences in reporting patterns or vaccine 
+    distribution may explain this trend."
   ) +
   theme_minimal() +
   theme(
@@ -1114,7 +1117,11 @@ ggplot(age_risk_group, aes(x = age_mid, y = adverse_rate)) +
 ### End Scatterplot ##################
 ######################################
 
-#########Create rolling trend ######################
+
+#######################################
+#########rolling trend ######################
+#######################################
+
 ##Shows how much is being reported, include overall trend.
 
 vaers_time_series_data <- calculated_data %>%
@@ -1196,7 +1203,6 @@ dual_axis_plot <- ggplot(vaers_time_series_data, aes(x = report_month)) +
   )
 
 print(dual_axis_plot)
-
 
 ##############################
 #### End Adverse Event Volume & Smoothed Trend
